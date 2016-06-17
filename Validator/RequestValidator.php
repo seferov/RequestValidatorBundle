@@ -88,7 +88,7 @@ class RequestValidator
     /**
      * @param $path
      *
-     * @return mixed|Validator
+     * @return Validator|null
      */
     private function getAnnotation($path)
     {
@@ -96,6 +96,6 @@ class RequestValidator
             return $this->annotations[$path];
         }
 
-        throw new \InvalidArgumentException('There ');
+        return null;
     }
 }
