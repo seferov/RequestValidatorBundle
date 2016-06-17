@@ -4,7 +4,9 @@ namespace Seferov\RequestValidatorBundle\Validator;
 
 use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * Class RequestValidator.
@@ -19,7 +21,7 @@ class RequestValidator
     private $annotations;
 
     /**
-     * @var
+     * @var ConstraintViolationList
      */
     private $errors;
 
@@ -30,19 +32,70 @@ class RequestValidator
         $this->annotations = $annotations;
     }
 
-    public function getAll()
-    {
-        return $this->request->query->all();
-    }
-
+    /**
+     * @return ConstraintViolationList
+     */
     public function getErrors()
     {
-        $this->errors = [];
+        $this->errors = new ConstraintViolationList();
         foreach ($this->annotations as $annotation) {
-            $violationList = $this->validator->validate($this->request->get($annotation->getName()), $annotation->getConstraints());
-            $this->errors[$annotation->getName()] = $violationList;
+            $requestValue = $this->getParameterBag()->get($annotation->getName());
+
+            if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
+                $this->errors->set($annotation->getName(), $this->validator->validate(null, new NotNull())->get(0));
+                continue;
+            }
+
+            if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
+                continue;
+            }
+
+            $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
+            foreach ($violationList as $violation) {
+                $this->errors->set($annotation->getName(), $violation);
+            }
         }
 
         return $this->errors;
+    }
+
+    /**
+     * @param $path
+     *
+     * @return mixed
+     */
+    public function get($path)
+    {
+        if (!$this->getParameterBag()->has($path)) {
+            return $this->getAnnotation($path)->getDefault();
+        }
+
+        return $this->getParameterBag()->get($path);
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\ParameterBag
+     */
+    private function getParameterBag()
+    {
+        if ('GET' == $this->request->getMethod()) {
+            return $this->request->query;
+        }
+
+        return $this->request->request;
+    }
+
+    /**
+     * @param $path
+     *
+     * @return mixed|Validator
+     */
+    private function getAnnotation($path)
+    {
+        if (array_key_exists($path, $this->annotations)) {
+            return $this->annotations[$path];
+        }
+
+        throw new \InvalidArgumentException('There ');
     }
 }

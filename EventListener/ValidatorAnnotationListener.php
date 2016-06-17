@@ -44,8 +44,14 @@ class ValidatorAnnotationListener
             return (bool) ($annotation instanceof Validator);
         });
 
+        $validators = [];
+        array_walk($annotations, function ($value) use (&$validators) {
+            /* @var Validator $value */
+            $validators[$value->getName()] = $value;
+        });
+
         if (count($annotations)) {
-            $request->attributes->set('requestValidator', new RequestValidator($request, $this->validator, $annotations));
+            $request->attributes->set('requestValidator', new RequestValidator($request, $this->validator, $validators));
         }
     }
 }

@@ -24,7 +24,12 @@ class Validator extends ConfigurationAnnotation
     /**
      * @var bool
      */
-    private $optional;
+    private $required = false;
+
+    /**
+     * @var mixed
+     */
+    private $default;
 
     public function getAliasName()
     {
@@ -53,22 +58,6 @@ class Validator extends ConfigurationAnnotation
     }
 
     /**
-     * @return bool
-     */
-    public function isOptional()
-    {
-        return $this->optional;
-    }
-
-    /**
-     * @param bool $optional
-     */
-    public function setOptional($optional)
-    {
-        $this->optional = $optional;
-    }
-
-    /**
      * @return array
      */
     public function getConstraints()
@@ -82,5 +71,45 @@ class Validator extends ConfigurationAnnotation
     public function setConstraints($constraints)
     {
         $this->constraints = $constraints;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param mixed $default
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequired()
+    {
+        return $this->required;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOptional()
+    {
+        return !$this->required;
+    }
+
+    /**
+     * @param bool $required
+     */
+    public function setRequired($required)
+    {
+        $this->required = $required;
     }
 }
