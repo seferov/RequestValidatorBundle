@@ -1,0 +1,16 @@
+{
+    "name": "seferov/request-validator-bundle",
+    "description": "Validates request params with Controller annotations",
+    "type": "symfony-bundle",
+    "require": {
+        "php": "~5.5|~7.0",
+        "symfony/framework-bundle": "^2.7|^3.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Farhad Safarov",
+            "email": "farhad.safarov@gmail.com"
+        }
+    ]
+}
