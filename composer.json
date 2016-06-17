@@ -12,5 +12,8 @@
             "name": "Farhad Safarov",
             "email": "farhad.safarov@gmail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": { "Seferov\\RequestValidatorBundle\\": "" }
+    }
 }
