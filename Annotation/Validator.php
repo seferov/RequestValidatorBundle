@@ -29,7 +29,7 @@ class Validator extends ConfigurationAnnotation
     /**
      * @var mixed
      */
-    private $default;
+    private $default = null;
 
     public function getAliasName()
     {

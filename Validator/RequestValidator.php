@@ -39,8 +39,6 @@ class RequestValidator
     {
         $this->errors = new ConstraintViolationList();
         foreach ($this->annotations as $annotation) {
-            $requestValue = $this->getParameterBag()->get($annotation->getName());
-
             if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
                 $this->errors->set($annotation->getName(), $this->validator->validate(null, new NotNull())->get(0));
                 continue;
@@ -49,6 +47,8 @@ class RequestValidator
             if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
                 continue;
             }
+
+            $requestValue = $this->getParameterBag()->get($annotation->getName());
 
             $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
             foreach ($violationList as $violation) {
@@ -74,6 +74,34 @@ class RequestValidator
     }
 
     /**
+     * Overwrites erroneous values with default one.
+     *
+     * @return array
+     */
+    public function getAll()
+    {
+        $all = [];
+
+        foreach ($this->annotations as $annotation) {
+            if (!$this->getParameterBag()->has($annotation->getName())) {
+                if ($annotation->isRequired()) {
+                    $all[$annotation->getName()] = $annotation->getDefault();
+                }
+                continue;
+            }
+
+            $requestValue = $this->getParameterBag()->get($annotation->getName());
+
+            $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
+            $all[$annotation->getName()] = count($violationList)
+                ? $annotation->getDefault()
+                : $requestValue;
+        }
+
+        return $all;
+    }
+
+    /**
      * @return \Symfony\Component\HttpFoundation\ParameterBag
      */
     private function getParameterBag()
@@ -96,6 +124,6 @@ class RequestValidator
             return $this->annotations[$path];
         }
 
-        return null;
+        return;
     }
 }
