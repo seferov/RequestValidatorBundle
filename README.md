@@ -48,7 +48,7 @@ Open a command console, enter your project directory and execute the
 following command to download the latest stable version of this bundle:
 
 ```bash
-$ composer require seferov/request-validator-bundle "~0.1"
+$ composer require seferov/request-validator-bundle
 ```
 
 This command requires you to have Composer installed globally, as explained
