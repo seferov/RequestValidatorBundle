@@ -93,7 +93,7 @@ class RequestValidator
 
         foreach ($this->annotations as $annotation) {
             if (!$this->getParameterBag()->has($annotation->getName())) {
-                if ($annotation->isRequired()) {
+                if ($annotation->isRequired() || $annotation->getDefault() || is_array($annotation->getDefault())) {
                     $all[$annotation->getName()] = $annotation->getDefault();
                 }
                 continue;
