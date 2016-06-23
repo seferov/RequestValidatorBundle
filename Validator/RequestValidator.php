@@ -6,7 +6,7 @@ use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class RequestValidator.
@@ -40,7 +40,7 @@ class RequestValidator
         $this->errors = new ConstraintViolationList();
         foreach ($this->annotations as $annotation) {
             if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
-                $this->errors->set($annotation->getName(), $this->validator->validate(null, new NotNull())->get(0));
+                $this->errors->set($annotation->getName(), $this->validator->validate(null, new Assert\NotNull())->get(0));
                 continue;
             }
 
@@ -50,6 +50,15 @@ class RequestValidator
 
             $requestValue = $this->getParameterBag()->get($annotation->getName());
 
+            // Fix for Assert\All constraint
+            foreach ($annotation->getConstraints() as $constraint) {
+                if ($constraint instanceof Assert\All && !is_array($requestValue)) {
+                    $this->errors->set($annotation->getName(), $this->validator->validate($requestValue, new Assert\Type(['type' => 'array']))->get(0));
+                    continue 2;
+                }
+            }
+
+            // Validate the value with all the constraints defined
             $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
             foreach ($violationList as $violation) {
                 $this->errors->set($annotation->getName(), $violation);
