@@ -5,6 +5,8 @@ namespace Seferov\RequestValidatorBundle\EventListener;
 use Doctrine\Common\Annotations\Reader;
 use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Seferov\RequestValidatorBundle\Validator\RequestValidator;
+use Seferov\RequestValidatorBundle\Validator\RequestValidatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -51,7 +53,18 @@ class ValidatorAnnotationListener
         });
 
         if (count($annotations)) {
-            $request->attributes->set('requestValidator', new RequestValidator($request, $this->validator, $validators));
+            $request->attributes->set('requestValidator', $this->createRequestValidator($request, $validators));
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param array   $validators
+     *
+     * @return RequestValidatorInterface
+     */
+    protected function createRequestValidator(Request $request, array $validators)
+    {
+        return new RequestValidator($request, $this->validator, $validators);
     }
 }

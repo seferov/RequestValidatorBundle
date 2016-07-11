@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Farhad Safarov <farhad.safarov@gmail.com>
  */
-class RequestValidator
+class RequestValidator implements RequestValidatorInterface
 {
     /**
      * @var Validator[]
@@ -24,6 +24,16 @@ class RequestValidator
      * @var ConstraintViolationList
      */
     private $errors;
+
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     public function __construct(Request $request, ValidatorInterface $validator, array $annotations)
     {
@@ -108,6 +118,14 @@ class RequestValidator
         }
 
         return $all;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 
     /**
