@@ -60,8 +60,9 @@ class RequestValidator implements RequestValidatorInterface
 
             $requestValue = $this->getParameterBag()->get($annotation->getName());
 
-            // Fix for Assert\All constraint
+            // Adjust Symfony constraints to request validator
             foreach ($annotation->getConstraints() as $constraint) {
+                // Fix for All constraint
                 if ($constraint instanceof Assert\All) {
                     if ($requestValue === null) {
                         $error = $this->validator->validate(null, new Assert\NotNull())->get(0);
@@ -74,6 +75,11 @@ class RequestValidator implements RequestValidatorInterface
                     $this->errors->set($annotation->getName(), $error);
 
                     continue 2;
+                }
+
+                // Fix for Type(type=boolean) constraint: on request 0 and 1 can be considered as boolean
+                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && in_array($requestValue, [0, 1])) {
+                    $requestValue = (bool) $requestValue;
                 }
             }
 
@@ -88,17 +94,34 @@ class RequestValidator implements RequestValidatorInterface
     }
 
     /**
+     * Gets value. If request does not have value, returns default.
+     *
      * @param $path
      *
      * @return mixed
      */
     public function get($path)
     {
-        if (!$this->getParameterBag()->has($path)) {
-            return $this->getAnnotation($path)->getDefault();
+        $annotation = $this->getAnnotation($path);
+
+        if (!$annotation) {
+            return;
         }
 
-        return $this->getParameterBag()->get($path);
+        if (!$this->getParameterBag()->has($path)) {
+            return $annotation->getDefault();
+        }
+
+        $requestValue = $this->getParameterBag()->get($path);
+
+        foreach ($annotation->getConstraints() as $constraint) {
+            // On boolean type request values with 0 and 1 should be considered as false and true respectively
+            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && in_array($requestValue, [0, 1])) {
+                return (bool) $requestValue;
+            }
+        }
+
+        return $requestValue;
     }
 
     /**
