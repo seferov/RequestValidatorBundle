@@ -78,7 +78,7 @@ class RequestValidator implements RequestValidatorInterface
                 }
 
                 // Fix for Type(type=boolean) constraint: on request 0 and 1 can be considered as boolean
-                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && in_array($requestValue, [0, 1])) {
+                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && ($requestValue === 1 || $requestValue === 0)) {
                     $requestValue = (bool) $requestValue;
                 }
             }
@@ -116,7 +116,7 @@ class RequestValidator implements RequestValidatorInterface
 
         foreach ($annotation->getConstraints() as $constraint) {
             // On boolean type request values with 0 and 1 should be considered as false and true respectively
-            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && in_array($requestValue, [0, 1])) {
+            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && ($requestValue === 1 || $requestValue === 0)) {
                 return (bool) $requestValue;
             }
         }
