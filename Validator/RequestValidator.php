@@ -77,9 +77,12 @@ class RequestValidator implements RequestValidatorInterface
                     continue 2;
                 }
 
-                // Fix for Type(type=boolean) constraint: on request 0 and 1 can be considered as boolean
-                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && ($requestValue === 1 || $requestValue === 0)) {
+                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
+<<<<<<< HEAD
+                    $requestValue = filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
+=======
                     $requestValue = (bool) $requestValue;
+>>>>>>> master
                 }
             }
 
@@ -115,9 +118,12 @@ class RequestValidator implements RequestValidatorInterface
         $requestValue = $this->getParameterBag()->get($path);
 
         foreach ($annotation->getConstraints() as $constraint) {
-            // On boolean type request values with 0 and 1 should be considered as false and true respectively
-            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && ($requestValue === 1 || $requestValue === 0)) {
+            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
+<<<<<<< HEAD
+                return filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
+=======
                 return (bool) $requestValue;
+>>>>>>> master
             }
         }
 
@@ -141,7 +147,7 @@ class RequestValidator implements RequestValidatorInterface
                 continue;
             }
 
-            $requestValue = $this->getParameterBag()->get($annotation->getName());
+            $requestValue = $this->get($annotation->getName());
 
             $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
             $all[$annotation->getName()] = count($violationList)
@@ -184,5 +190,29 @@ class RequestValidator implements RequestValidatorInterface
         }
 
         return;
+    }
+
+    /**
+     * On boolean type request values with 0 and 1 should be considered as false and true respectively.
+     *
+     * @param $s
+     *
+     * @return bool
+     */
+    private function isBoolean($s)
+    {
+<<<<<<< HEAD
+        if (filter_var($s, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
+            return false;
+        }
+
+        return true;
+=======
+        if ($s === '0' || $s === '1' || $s === 0 || $s === 1 || $s === true || $s === false) {
+            return true;
+        }
+
+        return false;
+>>>>>>> master
     }
 }
