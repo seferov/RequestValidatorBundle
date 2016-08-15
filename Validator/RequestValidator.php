@@ -141,7 +141,7 @@ class RequestValidator implements RequestValidatorInterface
                 continue;
             }
 
-            $requestValue = $this->getParameterBag()->get($annotation->getName());
+            $requestValue = $this->get($annotation->getName());
 
             $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
             $all[$annotation->getName()] = count($violationList)
