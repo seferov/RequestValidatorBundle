@@ -78,7 +78,11 @@ class RequestValidator implements RequestValidatorInterface
                 }
 
                 if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
+<<<<<<< HEAD
                     $requestValue = filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
+=======
+                    $requestValue = (bool) $requestValue;
+>>>>>>> master
                 }
             }
 
@@ -115,7 +119,11 @@ class RequestValidator implements RequestValidatorInterface
 
         foreach ($annotation->getConstraints() as $constraint) {
             if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
+<<<<<<< HEAD
                 return filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
+=======
+                return (bool) $requestValue;
+>>>>>>> master
             }
         }
 
@@ -193,10 +201,18 @@ class RequestValidator implements RequestValidatorInterface
      */
     private function isBoolean($s)
     {
+<<<<<<< HEAD
         if (filter_var($s, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
             return false;
         }
 
         return true;
+=======
+        if ($s === '0' || $s === '1' || $s === 0 || $s === 1 || $s === true || $s === false) {
+            return true;
+        }
+
+        return false;
+>>>>>>> master
     }
 }
