@@ -77,9 +77,8 @@ class RequestValidator implements RequestValidatorInterface
                     continue 2;
                 }
 
-                // Fix for Type(type=boolean) constraint: on request 0 and 1 can be considered as boolean
-                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && ($requestValue == 1 || $requestValue == 0)) {
-                    $requestValue = (bool) $requestValue;
+                if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
+                    $requestValue = filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
                 }
             }
 
@@ -115,9 +114,8 @@ class RequestValidator implements RequestValidatorInterface
         $requestValue = $this->getParameterBag()->get($path);
 
         foreach ($annotation->getConstraints() as $constraint) {
-            // On boolean type request values with 0 and 1 should be considered as false and true respectively
-            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && ($requestValue === 1 || $requestValue === 0)) {
-                return (bool) $requestValue;
+            if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
+                return filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
             }
         }
 
@@ -184,5 +182,21 @@ class RequestValidator implements RequestValidatorInterface
         }
 
         return;
+    }
+
+    /**
+     * On boolean type request values with 0 and 1 should be considered as false and true respectively.
+     *
+     * @param $s
+     *
+     * @return bool
+     */
+    private function isBoolean($s)
+    {
+        if (filter_var($s, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
+            return false;
+        }
+
+        return true;
     }
 }
