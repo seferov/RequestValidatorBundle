@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Client;
 
 /**
  * Class RequestValidatorTest
+ *
+ * @author Farhad Safarov <farhad.safarov@gmail.com>
  */
 class RequestValidatorTest extends WebTestCase
 {
@@ -46,5 +48,11 @@ class RequestValidatorTest extends WebTestCase
             'page' => 1,
             'order' => 'asc',
         ], $content);
+    }
+
+    public function testNoValidatorAnnotation()
+    {
+        $this->client->request('GET', '/no-validator-annotation');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 }

@@ -46,4 +46,14 @@ class RequestValidatorController extends Controller
     {
         return new JsonResponse($requestValidator->getAll());
     }
+
+    /**
+     * no validator annotation!
+     * @param RequestValidator $requestValidator
+     * @return JsonResponse
+     */
+    public function noValidatorAction(RequestValidator $requestValidator)
+    {
+        return new JsonResponse($requestValidator->getAll());
+    }
 }
