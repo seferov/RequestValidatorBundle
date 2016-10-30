@@ -52,9 +52,7 @@ class ValidatorAnnotationListener
             $validators[$value->getName()] = $value;
         });
 
-        if (count($annotations)) {
-            $request->attributes->set('requestValidator', $this->createRequestValidator($request, $validators));
-        }
+        $request->attributes->set('requestValidator', $this->createRequestValidator($request, $validators));
     }
 
     /**
