@@ -1,0 +1,7 @@
+test_violations:
+    path:     /violations
+    defaults: { _controller: "TestBundle:RequestValidator:violations" }
+
+test_default:
+    path:     /default
+    defaults: { _controller: "TestBundle:RequestValidator:default" }

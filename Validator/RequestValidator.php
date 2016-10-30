@@ -50,7 +50,8 @@ class RequestValidator implements RequestValidatorInterface
         $this->errors = new ConstraintViolationList();
         foreach ($this->annotations as $annotation) {
             if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
-                $this->errors->set($annotation->getName(), $this->validator->validate(null, new Assert\NotNull())->get(0));
+                $violation = $this->validator->validate(null, new Assert\NotNull())->get(0);
+                $this->errors->set($annotation->getName(), $violation);
                 continue;
             }
 
