@@ -1,6 +1,8 @@
 Symfony RequestValidatorBundle
 ==============================
 
+[![Build Status](https://travis-ci.org/seferov/RequestValidatorBundle.svg?branch=master)](https://travis-ci.org/seferov/RequestValidatorBundle)
+
 # Usage
 
 ```php
