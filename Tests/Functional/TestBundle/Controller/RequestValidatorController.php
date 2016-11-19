@@ -2,15 +2,15 @@
 
 namespace Seferov\RequestValidatorBundle\Tests\Functional\TestBundle\Controller;
 
+use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Seferov\RequestValidatorBundle\Validator\RequestValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class RequestValidatorController
+ * Class RequestValidatorController.
  */
 class RequestValidatorController extends Controller
 {
@@ -21,6 +21,7 @@ class RequestValidatorController extends Controller
      * @Validator(name="page", constraints={@Assert\Type(type="numeric"), @Assert\Range(min=1)})
      *
      * @param RequestValidator $requestValidator
+     *
      * @return Response
      */
     public function violationsAction(RequestValidator $requestValidator)
@@ -40,6 +41,7 @@ class RequestValidatorController extends Controller
      * @Validator(name="order", default="asc", constraints={@Assert\Choice(choices={"asc", "desc"})})
      *
      * @param RequestValidator $requestValidator
+     *
      * @return JsonResponse
      */
     public function defaultAction(RequestValidator $requestValidator)
@@ -49,7 +51,9 @@ class RequestValidatorController extends Controller
 
     /**
      * no validator annotation!
+     *
      * @param RequestValidator $requestValidator
+     *
      * @return JsonResponse
      */
     public function noValidatorAction(RequestValidator $requestValidator)

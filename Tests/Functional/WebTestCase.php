@@ -6,7 +6,7 @@ use Seferov\RequestValidatorBundle\Tests\Functional\app\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
 /**
- * Class WebTestCase
+ * Class WebTestCase.
  */
 class WebTestCase extends BaseWebTestCase
 {
