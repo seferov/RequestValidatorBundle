@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Kernel;
 AnnotationRegistry::registerLoader('class_exists');
 
 /**
- * Class AppKernel
+ * Class AppKernel.
  */
 class AppKernel extends Kernel
 {

@@ -6,8 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
- * Interface RequestValidatorInterface
- * @package Seferov\RequestValidatorBundle\Validator
+ * Interface RequestValidatorInterface.
  */
 interface RequestValidatorInterface
 {
@@ -18,6 +17,7 @@ interface RequestValidatorInterface
 
     /**
      * @param string $path
+     *
      * @return mixed
      */
     public function get($path);
