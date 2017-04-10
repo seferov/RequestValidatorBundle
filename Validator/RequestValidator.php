@@ -203,8 +203,6 @@ class RequestValidator implements RequestValidatorInterface
         if (array_key_exists($path, $this->annotations)) {
             return $this->annotations[$path];
         }
-
-        return null;
     }
 
     /**
