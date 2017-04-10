@@ -3,6 +3,7 @@
 namespace Seferov\RequestValidatorBundle\Annotation;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
+use Symfony\Component\Validator\Constraint;
 
 /**
  * @Annotation
@@ -17,7 +18,7 @@ class Validator extends ConfigurationAnnotation
     private $name;
 
     /**
-     * @var array
+     * @var array|Constraint[]
      */
     private $constraints = [];
 
@@ -58,7 +59,7 @@ class Validator extends ConfigurationAnnotation
     }
 
     /**
-     * @return array
+     * @return array|Constraint[]
      */
     public function getConstraints()
     {
@@ -71,6 +72,14 @@ class Validator extends ConfigurationAnnotation
     public function setConstraints($constraints)
     {
         $this->constraints = $constraints;
+    }
+
+    /**
+     * @param $key
+     */
+    public function removeConstraint($key)
+    {
+        unset($this->constraints[$key]);
     }
 
     /**

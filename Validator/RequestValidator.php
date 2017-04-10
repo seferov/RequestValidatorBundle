@@ -3,10 +3,11 @@
 namespace Seferov\RequestValidatorBundle\Validator;
 
 use Seferov\RequestValidatorBundle\Annotation\Validator;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class RequestValidator.
@@ -48,21 +49,14 @@ class RequestValidator implements RequestValidatorInterface
     public function getErrors()
     {
         $this->errors = new ConstraintViolationList();
+
+        $allFields = $this->getAll(false, false);
+
         foreach ($this->annotations as $annotation) {
-            if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
-                $violation = $this->validator->validate(null, new Assert\NotNull())->get(0);
-                $this->errors->set($annotation->getName(), $violation);
-                continue;
-            }
-
-            if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
-                continue;
-            }
-
             $requestValue = $this->getParameterBag()->get($annotation->getName());
 
             // Adjust Symfony constraints to request validator
-            foreach ($annotation->getConstraints() as $constraint) {
+            foreach ($annotation->getConstraints() as $key => $constraint) {
                 // Fix for All constraint
                 if ($constraint instanceof Assert\All) {
                     if ($requestValue === null) {
@@ -76,6 +70,26 @@ class RequestValidator implements RequestValidatorInterface
                     $this->errors->set($annotation->getName(), $error);
 
                     continue 2;
+                }
+
+                // Conditional constraints
+                if (isset($constraint->payload['when'])) {
+                    $language = new ExpressionLanguage();
+                    $condition = $language->evaluate($constraint->payload['when'], $allFields);
+
+                    if (!$condition) {
+                        $annotation->removeConstraint($key);
+                        continue;
+                    }
+                }
+                // Add NotNull for required empty params
+                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
+                    $this->errors->set($annotation->getName(), $this->validator->validate(null, new Assert\NotNull())->get(0));
+                    continue;
+                }
+                // Skip not required and empty params
+                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
+                    continue;
                 }
 
                 if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
@@ -124,11 +138,12 @@ class RequestValidator implements RequestValidatorInterface
     }
 
     /**
-     * Overwrites erroneous values with default one.
+     * @param bool $validate    Overwrites erroneous values with default one
+     * @param bool $skipMissing
      *
      * @return array
      */
-    public function getAll()
+    public function getAll($validate = true, $skipMissing = true)
     {
         $all = [];
 
@@ -137,15 +152,22 @@ class RequestValidator implements RequestValidatorInterface
                 if ($annotation->isRequired() || $annotation->getDefault() || is_array($annotation->getDefault())) {
                     $all[$annotation->getName()] = $annotation->getDefault();
                 }
-                continue;
+
+                if ($skipMissing) {
+                    continue;
+                }
             }
 
             $requestValue = $this->get($annotation->getName());
 
-            $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
-            $all[$annotation->getName()] = count($violationList)
-                ? $annotation->getDefault()
-                : $requestValue;
+            if ($validate) {
+                $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
+                $all[$annotation->getName()] = count($violationList)
+                    ? $annotation->getDefault()
+                    : $requestValue;
+            } else {
+                $all[$annotation->getName()] = $requestValue;
+            }
         }
 
         return $all;
@@ -181,6 +203,8 @@ class RequestValidator implements RequestValidatorInterface
         if (array_key_exists($path, $this->annotations)) {
             return $this->annotations[$path];
         }
+
+        return;
     }
 
     /**
