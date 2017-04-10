@@ -5,9 +5,9 @@ namespace Seferov\RequestValidatorBundle\Validator;
 use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class RequestValidator.
@@ -204,7 +204,7 @@ class RequestValidator implements RequestValidatorInterface
             return $this->annotations[$path];
         }
 
-        return;
+        return null;
     }
 
     /**
