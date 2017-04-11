@@ -50,6 +50,28 @@ class RequestValidatorController extends Controller
     }
 
     /**
+     * Not required fields.
+     *
+     * @Validator(name="page", constraints={@Assert\Type(type="numeric"), @Assert\Range(min=1)})
+     * @Validator(name="order", constraints={@Assert\Choice(choices={"asc", "desc"})})
+     * @Validator(name="emails", constraints={@Assert\All(@Assert\Email)})
+     *
+     * @param RequestValidator $requestValidator
+     *
+     * @return JsonResponse
+     */
+    public function notRequiredAction(RequestValidator $requestValidator)
+    {
+        $errors = $requestValidator->getErrors();
+        $response = [];
+        foreach ($errors as $error) {
+            $response[$error->getRoot()] = $error->getMessage();
+        }
+
+        return new JsonResponse($response);
+    }
+
+    /**
      * no validator annotation!
      *
      * @param RequestValidator $requestValidator
