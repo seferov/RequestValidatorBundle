@@ -50,6 +50,15 @@ class RequestValidatorTest extends WebTestCase
         ], $content);
     }
 
+    public function testNotRequired()
+    {
+        $this->client->request('GET', '/not-required');
+
+        $content = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertCount(0, $content);
+    }
+
     public function testNoValidatorAnnotation()
     {
         $this->client->request('GET', '/no-validator-annotation');

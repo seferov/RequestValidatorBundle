@@ -57,6 +57,26 @@ class RequestValidator implements RequestValidatorInterface
 
             // Adjust Symfony constraints to request validator
             foreach ($annotation->getConstraints() as $key => $constraint) {
+                // Conditional constraints
+                if (isset($constraint->payload['when'])) {
+                    $language = new ExpressionLanguage();
+                    $condition = $language->evaluate($constraint->payload['when'], $allFields);
+
+                    if (!$condition) {
+                        $annotation->removeConstraint($key);
+                        continue;
+                    }
+                }
+                // Skip not required and empty params
+                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
+                    continue;
+                }
+                // Add NotNull for required empty params
+                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
+                    $this->errors->set($annotation->getName(), $this->validator->validate(null, new Assert\NotNull())->get(0));
+                    continue;
+                }
+
                 // Fix for All constraint
                 if ($constraint instanceof Assert\All) {
                     if ($requestValue === null) {
@@ -72,26 +92,7 @@ class RequestValidator implements RequestValidatorInterface
                     continue 2;
                 }
 
-                // Conditional constraints
-                if (isset($constraint->payload['when'])) {
-                    $language = new ExpressionLanguage();
-                    $condition = $language->evaluate($constraint->payload['when'], $allFields);
-
-                    if (!$condition) {
-                        $annotation->removeConstraint($key);
-                        continue;
-                    }
-                }
-                // Add NotNull for required empty params
-                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
-                    $this->errors->set($annotation->getName(), $this->validator->validate(null, new Assert\NotNull())->get(0));
-                    continue;
-                }
-                // Skip not required and empty params
-                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
-                    continue;
-                }
-
+                // Fix for Type=boolean
                 if ($constraint instanceof Assert\Type && 'boolean' == $constraint->type && $this->isBoolean($requestValue)) {
                     $requestValue = filter_var($requestValue, FILTER_VALIDATE_BOOLEAN);
                 }

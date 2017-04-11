@@ -6,6 +6,10 @@ test_default:
     path:     /default
     defaults: { _controller: "TestBundle:RequestValidator:default" }
 
+test_not_required:
+    path:     /not-required
+    defaults: { _controller: "TestBundle:RequestValidator:notRequired" }
+
 test_no_validator_annotation:
     path:     /no-validator-annotation
     defaults: { _controller: "TestBundle:RequestValidator:noValidator" }
