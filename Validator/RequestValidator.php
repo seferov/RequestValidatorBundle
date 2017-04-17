@@ -69,6 +69,7 @@ class RequestValidator implements RequestValidatorInterface
                 }
                 // Skip not required and empty params
                 elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
+                    $annotation->removeConstraint($key);
                     continue;
                 }
                 // Add NotNull for required empty params

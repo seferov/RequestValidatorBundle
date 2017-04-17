@@ -59,6 +59,15 @@ class RequestValidatorTest extends WebTestCase
         $this->assertCount(0, $content);
     }
 
+    public function testNotBlankConstraint()
+    {
+        $this->client->request('GET', '/not-blank-constraint');
+
+        $content = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertCount(0, $content);
+    }
+
     public function testNoValidatorAnnotation()
     {
         $this->client->request('GET', '/no-validator-annotation');

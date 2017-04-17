@@ -72,6 +72,26 @@ class RequestValidatorController extends Controller
     }
 
     /**
+     * NotBlank constraint.
+     *
+     * @Validator(name="name", constraints={@Assert\NotBlank})
+     *
+     * @param RequestValidator $requestValidator
+     *
+     * @return JsonResponse
+     */
+    public function notBlankAction(RequestValidator $requestValidator)
+    {
+        $errors = $requestValidator->getErrors();
+        $response = [];
+        foreach ($errors as $error) {
+            $response[$error->getRoot()] = $error->getMessage();
+        }
+
+        return new JsonResponse($response);
+    }
+
+    /**
      * no validator annotation!
      *
      * @param RequestValidator $requestValidator
