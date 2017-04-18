@@ -55,6 +55,11 @@ class RequestValidator implements RequestValidatorInterface
         foreach ($this->annotations as $annotation) {
             $requestValue = $this->getParameterBag()->get($annotation->getName());
 
+            // Add NotNull for required empty params
+            if (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
+                $annotation->addConstraint(new Assert\NotNull());
+            }
+
             // Adjust Symfony constraints to request validator
             foreach ($annotation->getConstraints() as $key => $constraint) {
                 // Conditional constraints
@@ -70,11 +75,6 @@ class RequestValidator implements RequestValidatorInterface
                 // Skip not required and empty params
                 elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isOptional()) {
                     $annotation->removeConstraint($key);
-                    continue;
-                }
-                // Add NotNull for required empty params
-                elseif (!$this->getParameterBag()->has($annotation->getName()) && $annotation->isRequired()) {
-                    $this->errors->set($annotation->getName(), $this->validator->validate(null, new Assert\NotNull())->get(0));
                     continue;
                 }
 

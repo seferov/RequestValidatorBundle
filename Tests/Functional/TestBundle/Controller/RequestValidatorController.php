@@ -72,6 +72,29 @@ class RequestValidatorController extends Controller
     }
 
     /**
+     * Required fields.
+     *
+     * @Validator(name="firstname", required=true, constraints={@Assert\NotBlank})
+     * @Validator(name="lastname", constraints={@Assert\NotBlank})
+     * @Validator(name="email", required=true)
+     *
+     * @param RequestValidator $requestValidator
+     *
+     * @return JsonResponse
+     */
+    public function requiredAction(RequestValidator $requestValidator)
+    {
+        $errors = $requestValidator->getErrors();
+
+        $response = [];
+        foreach ($errors as $key => $error) {
+            $response[$key] = $error->getMessage();
+        }
+
+        return new JsonResponse($response);
+    }
+
+    /**
      * NotBlank constraint.
      *
      * @Validator(name="name", constraints={@Assert\NotBlank})

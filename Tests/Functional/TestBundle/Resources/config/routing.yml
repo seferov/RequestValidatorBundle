@@ -10,6 +10,10 @@ test_not_required:
     path:     /not-required
     defaults: { _controller: "TestBundle:RequestValidator:notRequired" }
 
+test_required:
+    path:     /required
+    defaults: { _controller: "TestBundle:RequestValidator:required" }
+
 test_not_blank_constraint:
     path:     /not-blank-constraint
     defaults: { _controller: "TestBundle:RequestValidator:notBlank" }
