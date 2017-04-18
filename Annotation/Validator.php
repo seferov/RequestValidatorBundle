@@ -83,6 +83,14 @@ class Validator extends ConfigurationAnnotation
     }
 
     /**
+     * @param Constraint $constraint
+     */
+    public function addConstraint(Constraint $constraint)
+    {
+        $this->constraints[] = $constraint;
+    }
+
+    /**
      * @return mixed
      */
     public function getDefault()
