@@ -56,7 +56,7 @@ class RequestValidator implements RequestValidatorInterface
             $requestValue = $this->getParameterBag()->get($annotation->getName());
 
             // Add NotNull for required empty params
-            if ((!$this->getParameterBag()->get($annotation->getName())) && $annotation->isRequired()) {
+            if (!$this->getParameterBag()->get($annotation->getName()) && $annotation->isRequired()) {
                 $annotation->addConstraint(new Assert\NotNull());
             }
 
