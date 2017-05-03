@@ -73,7 +73,7 @@ class RequestValidatorTest extends WebTestCase
     {
         $this->client->request('GET', '/required', [
             'firstname' => null,
-            'email' => null,
+            'email'     => null,
         ]);
 
         $content = json_decode($this->client->getResponse()->getContent(), true);
