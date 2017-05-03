@@ -69,6 +69,19 @@ class RequestValidatorTest extends WebTestCase
         $this->assertArrayHasKey('email', $content);
     }
 
+    public function testRequiredNull()
+    {
+        $this->client->request('GET', '/required', [
+            'firstname' => null,
+            'email'     => null,
+        ]);
+
+        $content = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('firstname', $content);
+        $this->assertArrayHasKey('email', $content);
+    }
+
     public function testNotBlankConstraint()
     {
         $this->client->request('GET', '/not-blank-constraint');
