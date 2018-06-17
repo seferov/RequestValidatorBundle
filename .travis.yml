@@ -12,8 +12,6 @@ matrix:
   include:
     - php: 5.6
       env: DEPENDENCIES="symfony/lts:^2"
-    - php: 7.0
-      env: TARGET=cs_dry_run
     - php: 7.1
       env: DEPENDENCIES="symfony/lts:^3"
 
@@ -25,8 +23,9 @@ cache:
 
 before_install:
   - composer selfupdate
-
   - if [ "$DEPENDENCIES" != "" ]; then composer require --no-update $DEPENDENCIES; fi;
   - echo "memory_limit=2G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 install: composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
+
+script: vendor/bin/phpunit
