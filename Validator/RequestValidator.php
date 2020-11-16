@@ -106,7 +106,7 @@ class RequestValidator implements RequestValidatorInterface
             $violationList = $this->validator->validate([
                 $annotation->getName() => $requestValue,
             ], new Assert\Collection([
-                $annotation->getName() => $annotation->getConstraints()
+                $annotation->getName() => $annotation->getConstraints(),
             ]));
             $this->errors->addAll($violationList);
         }
