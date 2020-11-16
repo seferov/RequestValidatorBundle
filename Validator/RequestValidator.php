@@ -9,11 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * Class RequestValidator.
- *
- * @author Farhad Safarov <farhad.safarov@gmail.com>
- */
 class RequestValidator implements RequestValidatorInterface
 {
     /**
