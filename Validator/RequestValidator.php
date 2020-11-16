@@ -78,11 +78,15 @@ class RequestValidator implements RequestValidatorInterface
                     if ($requestValue === null) {
                         $error = $this->validator->validate([
                             $annotation->getName() => $requestValue,
-                        ], new Assert\NotNull())->get(0);
+                        ], new Assert\Collection([
+                            $annotation->getName() => new Assert\NotNull(),
+                        ]))->get(0);
                     } elseif (!is_array($requestValue)) {
                         $error = $this->validator->validate([
                             $annotation->getName() => $requestValue,
-                        ], new Assert\Type(['type' => 'array']))->get(0);
+                        ], new Assert\Collection([
+                            $annotation->getName() => new Assert\Type(['type' => 'array']),
+                        ]))->get(0);
                     } else {
                         continue;
                     }
@@ -101,7 +105,9 @@ class RequestValidator implements RequestValidatorInterface
             // Validate the value with all the constraints defined
             $violationList = $this->validator->validate([
                 $annotation->getName() => $requestValue,
-            ], $annotation->getConstraints());
+            ], new Assert\Collection([
+                $annotation->getName() => $annotation->getConstraints()
+            ]));
             $this->errors->addAll($violationList);
         }
 
