@@ -81,14 +81,18 @@ class RequestValidator implements RequestValidatorInterface
                 // Fix for All constraint
                 if ($constraint instanceof Assert\All) {
                     if ($requestValue === null) {
-                        $error = $this->validator->validate(null, new Assert\NotNull())->get(0);
+                        $error = $this->validator->validate([
+                            $annotation->getName() => $requestValue,
+                        ], new Assert\NotNull())->get(0);
                     } elseif (!is_array($requestValue)) {
-                        $error = $this->validator->validate($requestValue, new Assert\Type(['type' => 'array']))->get(0);
+                        $error = $this->validator->validate([
+                            $annotation->getName() => $requestValue,
+                        ], new Assert\Type(['type' => 'array']))->get(0);
                     } else {
                         continue;
                     }
 
-                    $this->errors->set($annotation->getName(), $error);
+                    $this->errors->add($error);
 
                     continue 2;
                 }
@@ -100,10 +104,10 @@ class RequestValidator implements RequestValidatorInterface
             }
 
             // Validate the value with all the constraints defined
-            $violationList = $this->validator->validate($requestValue, $annotation->getConstraints());
-            foreach ($violationList as $violation) {
-                $this->errors->set($annotation->getName(), $violation);
-            }
+            $violationList = $this->validator->validate([
+                $annotation->getName() => $requestValue,
+            ], $annotation->getConstraints());
+            $this->errors->addAll($violationList);
         }
 
         return $this->errors;
