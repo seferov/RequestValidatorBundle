@@ -63,7 +63,7 @@ class Validator extends ConfigurationAnnotation
      */
     public function getConstraints()
     {
-        return $this->constraints;
+        return array_values($this->constraints);
     }
 
     /**
