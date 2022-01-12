@@ -7,14 +7,9 @@ use Seferov\RequestValidatorBundle\Annotation\Validator;
 use Seferov\RequestValidatorBundle\Validator\RequestValidator;
 use Seferov\RequestValidatorBundle\Validator\RequestValidatorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * Class ValidatorAnnotationListener.
- *
- * @author Farhad Safarov <farhad.safarov@gmail.com>
- */
 class ValidatorAnnotationListener
 {
     /**
@@ -28,7 +23,7 @@ class ValidatorAnnotationListener
         $this->validator = $validator;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         if (!is_array($controller = $event->getController())) {
             return;
